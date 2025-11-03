@@ -37,3 +37,6 @@ This project was a practical exercise in applying core Python skills to a cybers
 
 ## How to Use It
 You can view the `Cybersecurity_log_analyzer.ipynb` file directly in this repository. Because it's a self-contained notebook (it creates its own log files for the simulation), you can see the code, my documentation, and the final output for each cell, all in one place.
+
+## Acknowledgments
+The core logic and all Python code in this notebook were written by me. I used an AI assistant to help refine the in-code comments and improve the documentation for this `README.md` file.
