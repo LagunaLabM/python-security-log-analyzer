@@ -4,39 +4,38 @@ This project is a Python notebook created as part of my studies for the **Google
 
 ## What It Does
 
-This script is broken down into four distinct phases, all contained within the notebook:
+This script is broken down into multiple phases, all contained within the notebook:
 
 ### Phase 1: Log Parsing (Regex Triage)
-* Reads a simulated `raw_access_log.txt` file.
-* Uses a Regex (Regular Expression) pattern (`re.findall()`) to parse the file and extract all IP addresses, regardless of the log entry format.
+* Reads a simulated `raw_access_log.txt` (which includes well-formed and malformed IPs).
+* Uses a broad Regex (Regular Expression) pattern to parse the file and extract all strings that *look* like an IP address.
+
+### Phase 1.5: IP Validation
+* **(This phase was added after receiving expert community feedback)**
+* Defines and runs a `is_valid_ip` function to filter the raw list from Phase 1.
+* This function checks that each IP has four octets and that each octet is a valid digit between `0` and `255`.
+* It successfully filters out malformed IPs (e.g., `256.100.100.100` or `10.0.0.999`), and the results are printed in the notebook output.
 
 ### Phase 2: Policy Filtering (IP Allow-List Check)
-* Loads a `master_ip_allow_list.txt` file, which acts as the organization's "list of trusted IPs."
-* Compares the extracted IPs from Phase 1 against the allow-list.
-* Generates a final `suspicious_ips` list containing only the IPs that are **not** on the allow-list, flagging them for review.
+* Takes the new, *clean* `valid_ips` list.
+* Compares the valid IPs against the `master_ip_allow_list.txt`.
+* Generates a final `suspicious_ips` list containing only the IPs that are valid but not on the allow-list.
 
-### Phase 3: Authentication Logic (Access Control)
-* Defines a core function `check_login(username, device_id)` to simulate a "Zero Trust" security check.
-* Uses parallel lists to maintain a simple "database" of approved users and their single, assigned device.
-* The function returns one of three verdicts:
-    1.  **ACCESS GRANTED:** If the user and their assigned device both match.
-    2.  **DEVICE MISMATCH:** If the user is valid but the device ID is not the one assigned to them.
-    3.  **ACCESS DENIED:** If the user is not found in the approved list.
-
-### Phase 4: Script Testing
-* Runs a series of tests against the `check_login` function to prove the logic works for all three scenarios (Grant, Mismatch, and Deny).
+### Phase 3 & 4: Authentication Logic & Testing
+* Defines and tests a separate, modular function `check_login(username, device_id)` to simulate a "Zero Trust" security policy (checking both user and device).
 
 ## What I Learned
 This project was a practical exercise in applying core Python skills to a cybersecurity problem. Key concepts I practiced include:
 
 * **File I/O:** Reading and writing text files using `with open()`.
-* **Regex:** Using the `re` module to parse and extract data from unstructured text.
-* **List Manipulation:** Using loops, `if...in` statements, and `.append()` to filter data.
-* **Function Definition:** Building a reusable function with clear arguments, return values, and docstrings.
-* **Data Structures:** Using parallel lists to model a simple user/device database for access control.
+* **Regex:** Using the `re` module to parse unstructured text.
+* **List Manipulation:** Using loops, `if...in` statements, and list comprehensions to filter data.
+* **Function Definition:** Building reusable, documented functions (`is_valid_ip`, `check_login`) to create modular and testable code.
 
-## How to Use It
-You can view the `Cybersecurity_log_analyzer.ipynb` file directly in this repository. Because it's a self-contained notebook (it creates its own log files for the simulation), you can see the code, my documentation, and the final output for each cell, all in one place.
+## Acknowledgments & Project Iteration
 
-## Acknowledgments
-The core logic and all Python code in this notebook were written by me. I used an AI assistant to help refine the in-code comments and improve the documentation for this `README.md` file.
+The core logic and all Python code in this notebook were written by me. I used an AI assistant to help refine the in-code comments and documentation.
+
+**Special Thanks:** After sharing this project, I received expert feedback from a member of the Google Cybersecurity community who pointed out that my initial Regex did not *validate* IP addresses.
+
+Based on that feedback, I researched and implemented **Phase 1.5: IP Validation**. This demonstrates the critical importance of community feedback, robust input validation, and iterative development.
