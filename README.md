@@ -1,41 +1,65 @@
-# Python Security Log Analyzer & Access Control Script
+# Python Security Log Analyzer and Access Control Simulation
 
-This project is a Python notebook created as part of my studies for the **Google Cybersecurity Professional Certificate**. It simulates a real-world security task by ingesting a raw log file and performing a multi-phase analysis to triage threats and validate user access.
+This project is a Python notebook created as part of my studies for the **Google Cybersecurity Professional Certificate**. It simulates a basic cybersecurity workflow using sample log data to practice log parsing, IP address validation, allow-list filtering, and user/device access checks.
+
+All data is simulated. This is an educational project, not a production security tool.
 
 ## What It Does
 
-This script is broken down into multiple phases, all contained within the notebook:
+The notebook is organized into six steps:
 
-### Phase 1: Log Parsing (Regex Triage)
-* Reads a simulated `raw_access_log.txt` (which includes well-formed and malformed IPs).
-* Uses a broad Regex (Regular Expression) pattern to parse the file and extract all strings that *look* like an IP address.
+### 1. Prepare Simulated Data
 
-### Phase 1.5: IP Validation
-* **(This phase was added after receiving expert community feedback)**
-* Defines and runs a `is_valid_ip` function to filter the raw list from Phase 1.
-* This function checks that each IP has four octets and that each octet is a valid digit between `0` and `255`.
-* It successfully filters out malformed IPs (e.g., `256.100.100.100` or `10.0.0.999`), and the results are printed in the notebook output.
+- Creates a sample security log (`raw_access_log.txt`) containing normal events, failed login attempts, and malformed IP-like strings.
+- Creates a separate allow-list file (`master_ip_allow_list.txt`) containing the IP addresses permitted by the simulated policy.
+- Defines sample users and their assigned device IDs.
 
-### Phase 2: Policy Filtering (IP Allow-List Check)
-* Takes the new, *clean* `valid_ips` list.
-* Compares the valid IPs against the `master_ip_allow_list.txt`.
-* Generates a final `suspicious_ips` list containing only the IPs that are valid but not on the allow-list.
+### 2. Extract IP-Like Strings
 
-### Phase 3 & 4: Authentication Logic & Testing
-* Defines and tests a separate, modular function `check_login(username, device_id)` to simulate a "Zero Trust" security policy (checking both user and device).
+- Uses Python's `re` module and a regular expression to extract strings that resemble IPv4 addresses from the log.
+- This initial extraction identifies IP-like strings but does not validate whether their octets are within the valid range.
+
+### 3. Validate IPv4 Addresses
+
+- Defines an `is_valid_ip()` function to check that each address contains four numeric octets, each between `0` and `255`.
+- Filters out malformed values, such as `256.100.100.100` and `10.0.0.999`.
+- Retains repeated addresses because they may correspond to separate log events.
+
+### 4. Compare IP Addresses Against an Allow List
+
+- Compares the validated addresses with the simulated allow list.
+- Stores valid addresses that are not on the list in `unlisted_ips`.
+- Treats these results as entries requiring review, rather than automatically classifying them as malicious.
+
+### 5. Simulate User and Device Access Checks
+
+- Implements a reusable `check_login(username, device_id)` function.
+- Checks whether a username is approved and whether the supplied device ID matches the device assigned to that user.
+
+### 6. Test the Access-Control Function
+
+Tests three scenarios:
+- An approved user with the correct device.
+- An approved user with an incorrect device.
+- A user who is not on the approved list.
 
 ## What I Learned
-This project was a practical exercise in applying core Python skills to a cybersecurity problem. Key concepts I practiced include:
 
-* **File I/O:** Reading and writing text files using `with open()`.
-* **Regex:** Using the `re` module to parse unstructured text.
-* **List Manipulation:** Using loops, `if...in` statements, and list comprehensions to filter data.
-* **Function Definition:** Building reusable, documented functions (`is_valid_ip`, `check_login`) to create modular and testable code.
+This project gave me practical experience with core Python concepts in a cybersecurity context:
 
-## Acknowledgments & Project Iteration
+- **File handling:** Reading and writing text files using `with open()`.
+- **Regular expressions:** Extracting patterns from unstructured log data with `re`.
+- **Input validation:** Checking IPv4 octets using conditions, loops, and string operations.
+- **List manipulation:** Filtering and comparing collections using list comprehensions and membership checks.
+- **Functions:** Writing reusable functions with parameters and return values.
+- **Basic access-control logic:** Checking users against assigned device IDs and testing different access outcomes.
 
-The core logic and all Python code in this notebook were written by me. I used an AI assistant to help refine the in-code comments and documentation.
+## Acknowledgments
 
-**Special Thanks:** After sharing this project, I received expert feedback from a member of the Google Cybersecurity community who pointed out that my initial Regex did not *validate* IP addresses.
+I wrote the core logic and Python code in this notebook. I used an AI assistant to help refine some comments and documentation.
 
-Based on that feedback, I researched and implemented **Phase 1.5: IP Validation**. This demonstrates the critical importance of community feedback, robust input validation, and iterative development.
+## Limitations
+
+This notebook uses simulated data and simplified logic. It does not perform threat-intelligence lookups, inspect live network traffic, verify passwords, or enforce access controls on a real system.
+
+An IP address missing from the allow list is not necessarily malicious. In a production environment, additional investigation and security controls would be required. For stricter IP address validation, Python's built-in `ipaddress` module would be worth exploring.
